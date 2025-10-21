@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduAgent - AI Educational Tutor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>EduAgent</h1>
+                <p class="subtitle">AI-Powered Educational Tutor</p>
+                <div class="agent-status" id="agentStatus">
+                    <span class="status-indicator"></span>
+                    <span class="status-text">Connecting...</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-wrapper">
+                <!-- Left Panel: Question Input -->
+                <section class="question-panel">
+                    <h2>Ask a Question</h2>
+                    
+                    <form id="questionForm" class="question-form">
+                        <!-- Question Input -->
+                        <div class="form-group">
+                            <label for="question">Your Question</label>
+                            <textarea 
+                                id="question" 
+                                name="question" 
+                                placeholder="Ask me anything about mathematics, programming, algorithms, or data structures..."
+                                rows="4"
+                                required
+                            ></textarea>
+                        </div>
+
+                        <!-- Concept Type -->
+                        <div class="form-group">
+                            <label for="conceptType">Concept Type</label>
+                            <select id="conceptType" name="conceptType" required>
+                                <option value="">Select a concept type...</option>
+                                <option value="mathematics">Mathematics</option>
+                                <option value="programming">Programming</option>
+                                <option value="algorithm">Algorithm</option>
+                                <option value="data_structure">Data Structure</option>
+                            </select>
+                        </div>
+
+                        <!-- Difficulty Level -->
+                        <div class="form-group">
+                            <label for="difficultyLevel">Difficulty Level</label>
+                            <select id="difficultyLevel" name="difficultyLevel" required>
+                                <option value="beginner">Beginner</option>
+                                <option value="intermediate" selected>Intermediate</option>
+                                <option value="advanced">Advanced</option>
+                            </select>
+                        </div>
+
+                        <!-- Student ID (Optional) -->
+                        <div class="form-group">
+                            <label for="studentId">Student ID (Optional)</label>
+                            <input 
+                                type="text" 
+                                id="studentId" 
+                                name="studentId" 
+                                placeholder="Enter your student ID for progress tracking"
+                            >
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                            <span class="btn-text">Ask EduAgent</span>
+                            <span class="btn-loader" style="display: none;">
+                                <span class="spinner"></span>
+                            </span>
+                        </button>
+                    </form>
+                </section>
+
+                <!-- Right Panel: Response Display -->
+                <section class="response-panel">
+                    <h2>Response</h2>
+                    
+                    <div id="responseContainer" class="response-container">
+                        <div class="empty-state">
+                            <p>Ask a question to get started!</p>
+                        </div>
+                    </div>
+
+                    <!-- Response History -->
+                    <div class="history-section">
+                        <h3>Recent Questions</h3>
+                        <ul id="historyList" class="history-list">
+                            <li class="empty-history">No questions asked yet</li>
+                        </ul>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <p>&copy; 2025 EduAgent - ASI Alliance Innovation Lab</p>
+                <div class="footer-links">
+                    <a href="#" target="_blank">Documentation</a>
+                    <a href="#" target="_blank">GitHub</a>
+                    <a href="#" target="_blank">Agentverse</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
