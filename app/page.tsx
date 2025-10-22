@@ -21,17 +21,24 @@ interface DifficultyLevel {
   label: string
 }
 
+interface ExplanationResponse {
+  explanation: string
+  keyPoints: string[]
+  examples: string[]
+  practiceProblems: string[]
+}
+
 export default function Home() {
   const [agentInfo, setAgentInfo] = useState<AgentInfo | null>(null)
   const [concepts, setConcepts] = useState<Concept[]>([])
   const [difficultyLevels, setDifficultyLevels] = useState<DifficultyLevel[]>([])
   const [loading, setLoading] = useState(false)
-  const [response, setResponse] = useState<string>("")
+  const [response, setResponse] = useState<ExplanationResponse | null>(null)
   const [history, setHistory] = useState<string[]>([])
 
   const [formData, setFormData] = useState({
     question: "",
-    conceptType: "mathematics",
+    conceptType: "algebra",
     difficultyLevel: "intermediate",
     studentId: "",
   })
@@ -46,30 +53,61 @@ export default function Home() {
   const fetchAgentInfo = async () => {
     try {
       const res = await fetch("/api/agent/info")
+      if (!res.ok) throw new Error("Failed to fetch agent info")
       const data = await res.json()
       setAgentInfo(data)
     } catch (error) {
       console.error("Error fetching agent info:", error)
+      setAgentInfo({
+        name: "EduAgent",
+        address: "agent1qf6ygvqxf6ygvqxf6ygvqxf6ygvqxf6ygvqxf6ygvqxf6ygvqxf6ygvqxf6ygvq",
+        status: "offline",
+        capabilities: ["Mathematical Concept Explanation", "Programming Tutorials"],
+      })
     }
   }
 
   const fetchConcepts = async () => {
     try {
       const res = await fetch("/api/concepts")
+      if (!res.ok) throw new Error("Failed to fetch concepts")
       const data = await res.json()
-      setConcepts(data.concepts)
+      const conceptsData = data.concepts.map((concept: string) => ({
+        value: concept,
+        label: concept.charAt(0).toUpperCase() + concept.slice(1).replace("-", " "),
+      }))
+      setConcepts(conceptsData)
     } catch (error) {
       console.error("Error fetching concepts:", error)
+      setConcepts([
+        { value: "algebra", label: "Algebra" },
+        { value: "calculus", label: "Calculus" },
+        { value: "geometry", label: "Geometry" },
+        { value: "python", label: "Python" },
+        { value: "javascript", label: "JavaScript" },
+        { value: "data-structures", label: "Data Structures" },
+        { value: "algorithms", label: "Algorithms" },
+      ])
     }
   }
 
   const fetchDifficultyLevels = async () => {
     try {
       const res = await fetch("/api/difficulty-levels")
+      if (!res.ok) throw new Error("Failed to fetch difficulty levels")
       const data = await res.json()
-      setDifficultyLevels(data.levels)
+      const levelsData = data.levels.map((level: string) => ({
+        value: level,
+        label: level.charAt(0).toUpperCase() + level.slice(1),
+      }))
+      setDifficultyLevels(levelsData)
     } catch (error) {
       console.error("Error fetching difficulty levels:", error)
+      setDifficultyLevels([
+        { value: "beginner", label: "Beginner" },
+        { value: "intermediate", label: "Intermediate" },
+        { value: "advanced", label: "Advanced" },
+      ])
     }
   }
 
@@ -92,49 +130,19 @@ export default function Home() {
       const data = await res.json()
 
       if (res.ok) {
-        setResponse(generateMockResponse(formData.conceptType, formData.difficultyLevel))
+        setResponse(data)
         addToHistory(formData.question)
         setFormData({ ...formData, question: "" })
       } else {
-        setResponse(`Error: ${data.error}`)
+        console.error("Error:", data.error)
+        setResponse(null)
       }
     } catch (error) {
-      setResponse(`Error: ${error instanceof Error ? error.message : "Unknown error"}`)
+      console.error("Error submitting question:", error)
+      setResponse(null)
     } finally {
       setLoading(false)
     }
-  }
-
-  const generateMockResponse = (conceptType: string, difficultyLevel: string) => {
-    const responses: Record<string, Record<string, string>> = {
-      mathematics: {
-        beginner:
-          "Mathematics is the study of numbers and shapes. Start with basic arithmetic and build up from there.",
-        intermediate:
-          "Mathematics involves abstract concepts and proofs. Focus on understanding the underlying principles.",
-        advanced: "Advanced mathematics explores complex structures and theoretical frameworks.",
-      },
-      programming: {
-        beginner: "Programming is writing instructions for computers. Start with simple variables and loops.",
-        intermediate: "Learn about functions, classes, and design patterns for better code organization.",
-        advanced: "Explore advanced concepts like concurrency, optimization, and architectural patterns.",
-      },
-      algorithm: {
-        beginner: "Algorithms are step-by-step procedures. Start with simple sorting and searching.",
-        intermediate: "Learn about complexity analysis and common algorithm patterns.",
-        advanced: "Study advanced algorithms like dynamic programming and graph algorithms.",
-      },
-      data_structure: {
-        beginner: "Data structures organize information. Start with arrays and linked lists.",
-        intermediate: "Learn about trees, graphs, and hash tables.",
-        advanced: "Explore advanced structures and their optimization techniques.",
-      },
-    }
-
-    return (
-      responses[conceptType]?.[difficultyLevel] ||
-      "Here is an explanation of your concept. Practice with examples to deepen your understanding."
-    )
   }
 
   const addToHistory = (question: string) => {
@@ -158,9 +166,11 @@ export default function Home() {
           <h1 className="text-4xl font-bold mb-2">EduAgent</h1>
           <p className="text-blue-100 mb-4">AI-Powered Educational Tutor</p>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+            <div
+              className={`w-3 h-3 rounded-full animate-pulse ${agentInfo?.status === "active" ? "bg-green-400" : "bg-red-400"}`}
+            ></div>
             <span className="text-sm">
-              {agentInfo ? `Agent Online - ${agentInfo.address?.slice(0, 20)}...` : "Connecting..."}
+              {agentInfo ? `Agent ${agentInfo.status} - ${agentInfo.address?.slice(0, 20)}...` : "Connecting..."}
             </span>
           </div>
         </div>
@@ -263,14 +273,22 @@ export default function Home() {
                 <div className="space-y-4">
                   <div>
                     <h3 className="font-semibold text-blue-600 mb-2">Explanation</h3>
-                    <p className="text-gray-700">{response}</p>
+                    <p className="text-gray-700 whitespace-pre-wrap">{response.explanation}</p>
                   </div>
                   <div>
                     <h3 className="font-semibold text-blue-600 mb-2">Key Points</h3>
                     <ul className="list-disc list-inside space-y-1 text-gray-700">
-                      <li>Focus on understanding the core concept</li>
-                      <li>Practice with multiple examples</li>
-                      <li>Connect to real-world applications</li>
+                      {response.keyPoints.map((point, index) => (
+                        <li key={index}>{point}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-blue-600 mb-2">Examples</h3>
+                    <ul className="list-disc list-inside space-y-1 text-gray-700">
+                      {response.examples.map((example, index) => (
+                        <li key={index}>{example}</li>
+                      ))}
                     </ul>
                   </div>
                 </div>
