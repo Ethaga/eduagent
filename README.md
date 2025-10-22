@@ -262,7 +262,7 @@ Apache 2.0 - See LICENSE file for details
 ## Agent Address
 
 \`\`\`
-agent1q...  # Your agent address will appear here after deployment
+agent1qvuswp05mg6ahxjsn0r3lghmpkmsdj4l3kx90xm0d9lr2jpztaxtuy93h0s
 \`\`\`
 
 ---
