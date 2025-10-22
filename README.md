@@ -125,15 +125,6 @@ Progress is automatically recorded on blockchain when:
 - An achievement is unlocked
 - A concept is mastered
 
-Configure blockchain in `.env`:
-\`\`\`
-WEB3_PROVIDER=https://mainnet.infura.io/v3/your_key
-PRIVATE_KEY=your_private_key
-CONTRACT_ADDRESS=0x...
-\`\`\`
-
-## API Endpoints
-
 ### Agent Information
 - `GET /api/agent/info` - Get agent details and capabilities
 
