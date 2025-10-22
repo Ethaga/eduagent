@@ -78,7 +78,6 @@ EduAgent/
 4. **Configure environment**
    \`\`\`bash
    cp .env.example .env
-   # Edit .env with your configuration
    \`\`\`
 
 5. **Run the agent**
