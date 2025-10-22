@@ -3,8 +3,14 @@ Core reasoning engine for EduAgent
 Handles concept analysis, explanation generation, and learning strategies
 """
 import json
+import os
+import requests
 from typing import List, Dict, Optional
+from dotenv import load_dotenv
 from models import ExplanationResponse, ConceptType
+
+load_dotenv()
+ASI_API_KEY = os.getenv("ASI_API_KEY")
 
 class ReasoningEngine:
     """
@@ -129,8 +135,13 @@ class ReasoningEngine:
         strategy = self.explanation_strategies.get(difficulty_level, 
                                                    self.explanation_strategies["intermediate"])
         
+        external_explanation = self._external_reasoning(question, concept_type.value, difficulty_level)
+        if external_explanation:
+            explanation = external_explanation
+        else:
+            explanation = self._build_explanation(analysis, strategy)
+        
         # Generate explanation components
-        explanation = self._build_explanation(analysis, strategy)
         key_points = self._extract_key_points(analysis, strategy)
         examples = self._generate_examples(analysis, strategy)
         practice_problems = self._suggest_practice_problems(analysis, strategy)
@@ -144,6 +155,41 @@ class ReasoningEngine:
             difficulty_level=difficulty_level,
             concept_type=concept_type.value
         )
+    
+    def _external_reasoning(self, question: str, concept_type: str, difficulty: str) -> Optional[str]:
+        """
+        Query ASI.one to get advanced reasoning response
+        """
+        if not ASI_API_KEY:
+            print("[WARN] ASI_API_KEY not found — skipping external reasoning.")
+            return None
+        
+        api_url = "https://api.asi.one/v1/chat/completions"
+        headers = {
+            "Authorization": f"Bearer {ASI_API_KEY}",
+            "Content-Type": "application/json"
+        }
+        
+        payload = {
+            "model": "gpt-4o-mini",
+            "messages": [
+                {"role": "system", "content": "You are an educational reasoning assistant for students. Provide clear, concise explanations."},
+                {"role": "user", "content": f"Question: {question}\nConcept: {concept_type}\nDifficulty Level: {difficulty}"}
+            ],
+            "max_tokens": 500
+        }
+        
+        try:
+            response = requests.post(api_url, headers=headers, json=payload, timeout=10)
+            data = response.json()
+            if "choices" in data and data["choices"]:
+                return data["choices"][0]["message"]["content"]
+            else:
+                print("[ERROR] Unexpected ASI.one response:", data)
+        except Exception as e:
+            print(f"[ERROR] External reasoning failed: {e}")
+        
+        return None
     
     def _build_explanation(self, analysis: Dict, strategy: Dict) -> str:
         """Build the main explanation text"""

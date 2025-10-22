@@ -3,6 +3,8 @@ Main EduAgent implementation
 Autonomous educational tutor agent using uAgents framework
 """
 import asyncio
+import os
+from dotenv import load_dotenv
 from uagents import Agent, Context, Model
 from typing import Optional
 from config import AGENT_NAME, AGENT_SEED, AGENT_PORT, AGENT_ENDPOINT
@@ -22,6 +24,9 @@ from blockchain_integration import (
     ProgressRecord,
     AchievementSystem
 )
+
+load_dotenv()
+AGENT_ADDRESS = os.getenv("AGENT_ADDRESS", "agent1qvuswp05mg6ahxjsn0r3lghmpkmsdj4l3kx90xm0d9lr2jpztaxtuy93h0s")
 
 # Initialize the agent
 agent = Agent(

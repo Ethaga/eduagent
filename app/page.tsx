@@ -44,71 +44,225 @@ export default function Home() {
   })
 
   useEffect(() => {
-    fetchAgentInfo()
-    fetchConcepts()
-    fetchDifficultyLevels()
+    setAgentInfo({
+      name: "EduAgent",
+      address: "agent1qf6ygvqxf6ygvqxf6ygvqxf6ygvqxf6ygvqxf6ygvqxf6ygvqxf6ygvqxf6ygvq",
+      status: "active",
+      capabilities: [
+        "Mathematical Concept Explanation",
+        "Programming Tutorials",
+        "Algorithm Explanation",
+        "Data Structure Guidance",
+      ],
+    })
+
+    setConcepts([
+      { value: "algebra", label: "Algebra" },
+      { value: "calculus", label: "Calculus" },
+      { value: "geometry", label: "Geometry" },
+      { value: "python", label: "Python" },
+      { value: "javascript", label: "JavaScript" },
+      { value: "data-structures", label: "Data Structures" },
+      { value: "algorithms", label: "Algorithms" },
+    ])
+
+    setDifficultyLevels([
+      { value: "beginner", label: "Beginner" },
+      { value: "intermediate", label: "Intermediate" },
+      { value: "advanced", label: "Advanced" },
+    ])
+
     loadHistory()
   }, [])
 
-  const fetchAgentInfo = async () => {
-    try {
-      const res = await fetch("/api/agent/info")
-      if (!res.ok) throw new Error("Failed to fetch agent info")
-      const data = await res.json()
-      setAgentInfo(data)
-    } catch (error) {
-      console.error("Error fetching agent info:", error)
-      setAgentInfo({
-        name: "EduAgent",
-        address: "agent1qf6ygvqxf6ygvqxf6ygvqxf6ygvqxf6ygvqxf6ygvqxf6ygvqxf6ygvqxf6ygvq",
-        status: "offline",
-        capabilities: ["Mathematical Concept Explanation", "Programming Tutorials"],
-      })
+  const generateMockResponse = (question: string, conceptType: string, difficulty: string): ExplanationResponse => {
+    const responses: Record<string, Record<string, ExplanationResponse>> = {
+      algebra: {
+        beginner: {
+          explanation:
+            "Algebra is the branch of mathematics that uses letters (variables) to represent unknown numbers. It helps us solve problems by creating equations.",
+          keyPoints: [
+            "Variables represent unknown values",
+            "Equations show relationships between numbers",
+            "We solve by isolating the variable",
+            "Balance both sides of the equation",
+          ],
+          examples: ["x + 5 = 12 → x = 7", "2x = 10 → x = 5", "x - 3 = 7 → x = 10"],
+          practiceProblems: ["Solve: x + 8 = 15", "Solve: 3x = 21", "Solve: x - 4 = 6"],
+        },
+        intermediate: {
+          explanation:
+            "Intermediate algebra involves working with polynomials, factoring, and quadratic equations. These concepts build on basic algebraic principles.",
+          keyPoints: [
+            "Polynomials have multiple terms with variables",
+            "Factoring breaks expressions into simpler parts",
+            "Quadratic equations have x² terms",
+            "Use the quadratic formula or factoring to solve",
+          ],
+          examples: [
+            "x² + 5x + 6 = (x + 2)(x + 3)",
+            "x² - 4 = (x - 2)(x + 2)",
+            "Using quadratic formula: x = (-b ± √(b² - 4ac)) / 2a",
+          ],
+          practiceProblems: ["Factor: x² + 7x + 12", "Solve: x² - 9 = 0", "Factor: 2x² + 8x + 6"],
+        },
+        advanced: {
+          explanation:
+            "Advanced algebra covers complex polynomials, systems of equations, matrices, and abstract algebraic structures.",
+          keyPoints: [
+            "Systems of equations can be solved using matrices",
+            "Eigenvalues and eigenvectors are important in linear algebra",
+            "Abstract algebra studies algebraic structures",
+            "Group theory and ring theory are key concepts",
+          ],
+          examples: [
+            "Matrix multiplication: [a b] × [e f] = [ae+bg af+bh]",
+            "Determinant calculation for 2×2 matrix",
+            "Solving systems using Gaussian elimination",
+          ],
+          practiceProblems: [
+            "Find the determinant of a 3×3 matrix",
+            "Solve a system of 3 equations with 3 unknowns",
+            "Find eigenvalues of a given matrix",
+          ],
+        },
+      },
+      python: {
+        beginner: {
+          explanation:
+            "Python is a beginner-friendly programming language. It uses simple syntax and is great for learning programming concepts.",
+          keyPoints: [
+            "Python uses indentation for code blocks",
+            "Variables store data without declaring types",
+            "Print function displays output",
+            "Comments start with #",
+          ],
+          examples: [
+            "print('Hello, World!')",
+            "x = 10; y = 20; print(x + y)",
+            "name = 'Alice'; print(f'Hello, {name}')",
+          ],
+          practiceProblems: [
+            "Write a program that prints your name",
+            "Create variables and print their sum",
+            "Use a loop to print numbers 1 to 10",
+          ],
+        },
+        intermediate: {
+          explanation:
+            "Intermediate Python covers functions, lists, dictionaries, and file handling. These are essential for building real applications.",
+          keyPoints: [
+            "Functions organize code into reusable blocks",
+            "Lists store multiple values",
+            "Dictionaries use key-value pairs",
+            "File I/O allows reading and writing data",
+          ],
+          examples: [
+            "def greet(name): return f'Hello, {name}'",
+            "my_list = [1, 2, 3]; my_list.append(4)",
+            "my_dict = {'name': 'Alice', 'age': 25}",
+          ],
+          practiceProblems: [
+            "Write a function that calculates factorial",
+            "Create a list and filter even numbers",
+            "Read from a file and count lines",
+          ],
+        },
+        advanced: {
+          explanation:
+            "Advanced Python includes decorators, generators, async programming, and metaprogramming for building complex applications.",
+          keyPoints: [
+            "Decorators modify function behavior",
+            "Generators use yield for memory efficiency",
+            "Async/await enables concurrent programming",
+            "Metaclasses control class creation",
+          ],
+          examples: [
+            "@decorator def func(): pass",
+            "def gen(): yield 1; yield 2",
+            "async def fetch(): await asyncio.sleep(1)",
+          ],
+          practiceProblems: [
+            "Create a decorator that logs function calls",
+            "Write a generator for Fibonacci sequence",
+            "Build an async web scraper",
+          ],
+        },
+      },
+      "data-structures": {
+        beginner: {
+          explanation:
+            "Data structures are ways to organize and store data. Arrays and lists are the simplest data structures.",
+          keyPoints: [
+            "Arrays store elements in contiguous memory",
+            "Lists are dynamic arrays that can grow",
+            "Access elements by index (0-based)",
+            "Common operations: insert, delete, search",
+          ],
+          examples: [
+            "Array: [1, 2, 3, 4, 5]",
+            "List in Python: my_list = [10, 20, 30]",
+            "Access: my_list[0] returns 10",
+          ],
+          practiceProblems: [
+            "Create a list and access the third element",
+            "Add and remove elements from a list",
+            "Find the maximum value in a list",
+          ],
+        },
+        intermediate: {
+          explanation:
+            "Intermediate data structures include stacks, queues, linked lists, and trees. These are crucial for algorithm design.",
+          keyPoints: [
+            "Stacks follow LIFO (Last In First Out)",
+            "Queues follow FIFO (First In First Out)",
+            "Linked lists use pointers to connect nodes",
+            "Trees have hierarchical structure",
+          ],
+          examples: [
+            "Stack: push(5), push(10), pop() returns 10",
+            "Queue: enqueue(1), enqueue(2), dequeue() returns 1",
+            "Binary Tree: root with left and right children",
+          ],
+          practiceProblems: [
+            "Implement a stack using a list",
+            "Implement a queue using a list",
+            "Create a simple binary tree",
+          ],
+        },
+        advanced: {
+          explanation:
+            "Advanced data structures include hash tables, graphs, heaps, and tries. These optimize specific operations.",
+          keyPoints: [
+            "Hash tables provide O(1) average lookup",
+            "Graphs represent networks and relationships",
+            "Heaps maintain partial ordering",
+            "Tries efficiently store strings",
+          ],
+          examples: [
+            "Hash table: {'key': 'value'}",
+            "Graph: nodes connected by edges",
+            "Min-heap: parent ≤ children",
+            "Trie: tree of characters for prefix search",
+          ],
+          practiceProblems: [
+            "Implement a hash table with collision handling",
+            "Build a graph and perform DFS/BFS",
+            "Implement a min-heap",
+            "Build a trie for autocomplete",
+          ],
+        },
+      },
     }
-  }
 
-  const fetchConcepts = async () => {
-    try {
-      const res = await fetch("/api/concepts")
-      if (!res.ok) throw new Error("Failed to fetch concepts")
-      const data = await res.json()
-      const conceptsData = data.concepts.map((concept: string) => ({
-        value: concept,
-        label: concept.charAt(0).toUpperCase() + concept.slice(1).replace("-", " "),
-      }))
-      setConcepts(conceptsData)
-    } catch (error) {
-      console.error("Error fetching concepts:", error)
-      setConcepts([
-        { value: "algebra", label: "Algebra" },
-        { value: "calculus", label: "Calculus" },
-        { value: "geometry", label: "Geometry" },
-        { value: "python", label: "Python" },
-        { value: "javascript", label: "JavaScript" },
-        { value: "data-structures", label: "Data Structures" },
-        { value: "algorithms", label: "Algorithms" },
-      ])
-    }
-  }
-
-  const fetchDifficultyLevels = async () => {
-    try {
-      const res = await fetch("/api/difficulty-levels")
-      if (!res.ok) throw new Error("Failed to fetch difficulty levels")
-      const data = await res.json()
-      const levelsData = data.levels.map((level: string) => ({
-        value: level,
-        label: level.charAt(0).toUpperCase() + level.slice(1),
-      }))
-      setDifficultyLevels(levelsData)
-    } catch (error) {
-      console.error("Error fetching difficulty levels:", error)
-      setDifficultyLevels([
-        { value: "beginner", label: "Beginner" },
-        { value: "intermediate", label: "Intermediate" },
-        { value: "advanced", label: "Advanced" },
-      ])
-    }
+    return (
+      responses[conceptType]?.[difficulty] || {
+        explanation: `This is a ${difficulty} level explanation for ${conceptType}.`,
+        keyPoints: ["Key point 1", "Key point 2", "Key point 3"],
+        examples: ["Example 1", "Example 2"],
+        practiceProblems: ["Problem 1", "Problem 2"],
+      }
+    )
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -116,29 +270,13 @@ export default function Home() {
     setLoading(true)
 
     try {
-      const res = await fetch("/api/ask", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          question: formData.question,
-          concept_type: formData.conceptType,
-          difficulty_level: formData.difficultyLevel,
-          student_id: formData.studentId || null,
-        }),
-      })
+      const mockResponse = generateMockResponse(formData.question, formData.conceptType, formData.difficultyLevel)
 
-      const data = await res.json()
-
-      if (res.ok) {
-        setResponse(data)
-        addToHistory(formData.question)
-        setFormData({ ...formData, question: "" })
-      } else {
-        console.error("Error:", data.error)
-        setResponse(null)
-      }
+      setResponse(mockResponse)
+      addToHistory(formData.question)
+      setFormData({ ...formData, question: "" })
     } catch (error) {
-      console.error("Error submitting question:", error)
+      console.error("Error processing question:", error)
       setResponse(null)
     } finally {
       setLoading(false)
