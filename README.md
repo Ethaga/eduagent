@@ -148,110 +148,19 @@ CONTRACT_ADDRESS=0x...
 ### Health
 - `GET /api/health` - Health check endpoint
 
-## Agentverse Deployment
-
-1. **Register on Agentverse**
-   - Go to https://agentverse.ai
-   - Create a new agent
-   - Copy your agent address
-
-2. **Enable Chat Protocol**
-   - In Agentverse, enable Chat Protocol for your agent
-   - This makes it discoverable through ASI:One
-
-3. **Deploy**
-   \`\`\`bash
-   # Update AGENT_SEED in config.py with your Agentverse seed
-   python edu_agent.py
-   \`\`\`
-
-Your agent will be registered and discoverable at:
-\`\`\`
-https://agentverse.ai/inspect/?uri=http://localhost:8000&address=agent1q...
-\`\`\`
-
-## Integration with SingularityNET MeTTa
-
-EduAgent is ready for MeTTa Knowledge Graph integration:
-
-\`\`\`python
-# Example: Query MeTTa knowledge base
-from metta import MettaRunner
-
-runner = MettaRunner()
-result = runner.run("(query-concept 'calculus')")
-\`\`\`
-
-## Development
-
-### Adding New Concepts
-
-Edit `reasoning_engine.py` to add new concepts:
-
-\`\`\`python
-self.knowledge_base["new_domain"] = {
-    "new_concept": {
-        "description": "...",
-        "key_concepts": [...],
-        "examples": [...]
-    }
-}
-\`\`\`
-
-### Extending Agent Communication
-
-Register new message handlers:
-
-\`\`\`python
-comm_manager.register_message_handler(
-    MessageType.CUSTOM,
-    handle_custom_message
-)
-\`\`\`
-
-### Custom Blockchain Integration
-
-Implement your own blockchain recorder:
-
-\`\`\`python
-class CustomBlockchainTracker(BlockchainProgressTracker):
-    def record_progress(self, record):
-        # Custom implementation
-        pass
-\`\`\`
 
 ## Performance Metrics
 
 - **Response Time**: < 2 seconds for typical questions
 - **Concurrent Users**: Supports multiple simultaneous learners
 - **API Reliability**: 99.9% uptime with fallback mechanisms
-- **Blockchain Transactions**: Batched for efficiency
 
-## Security
-
-- **Private Keys**: Never commit `.env` files with real keys
-- **API Keys**: Use environment variables for all sensitive data
-- **Row Level Security**: Blockchain records are immutable and verifiable
-- **Agent Verification**: All agent communications are cryptographically signed
-
-## Contributing
-
-Contributions are welcome! Please:
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
-
-## License
+Resources
+- [ASI.one](https://asi.one)
+- [Fetch.ai uAgents Documentation](https://docs.fetch.ai/uAgents)
+- [Documentation] https://innovationlab.fetch.ai/resources/docs
 
 Apache 2.0 - See LICENSE file for details
-
-## Support
-
-- **Documentation**: https://innovationlab.fetch.ai/resources/docs
-- **GitHub Issues**: Report bugs and request features
-- **Community**: Join the Fetch.ai Discord community
 
 ## Acknowledgments
 
@@ -267,6 +176,5 @@ agent1qvuswp05mg6ahxjsn0r3lghmpkmsdj4l3kx90xm0d9lr2jpztaxtuy93h0s
 
 ---
 
-**Status**: Active Development
-**Last Updated**: 2025-01-10
-**Version**: 1.0.0
+**Status**: Active
+**Last Updated**: 23 okt 2025
