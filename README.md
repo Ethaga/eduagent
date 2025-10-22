@@ -158,6 +158,11 @@ Apache 2.0 - See LICENSE file for details
 - Integrated with [ASI Alliance](https://asi1.ai)
 - Powered by [SingularityNET](https://singularitynet.io)
 
+## Name Agent
+\`\`\`
+ethaga (Eduagent)
+\`\`\`
+
 ## Agent Address
 
 \`\`\`
